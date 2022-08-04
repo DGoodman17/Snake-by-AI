@@ -37,16 +37,14 @@ pygame.init()
 
 # Initialize game window
 pygame.display.set_caption("AI Snake")
-while running:
-    global game_window
-    game_window = pygame.display.set_mode((window_x, window_y))
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-            pygame.quit()
-        #FPS Controller and counter
-        fps = pygame.time.Clock()
-
+# while running:
+#     for event in pygame.event.get():
+#         if event.type == pygame.QUIT:
+#             running = False
+#             pygame.quit()
+#         #FPS Controller and counter
+#         
+fps = pygame.time.Clock()
 # Define the snake position
 snake_position = [100, 50]
 
@@ -84,7 +82,7 @@ def show_score(choice, color, font, size, game_window):
     score_rect = score_surface.get_rect()
 
     # Displaying text
-    game_window.blit(score_surface, score_rect)
+    screen.blit(score_surface, score_rect)
 
 # Game over function
 
@@ -101,7 +99,7 @@ def game_over(game_window):
     game_over_rect = game_over_surface.get_rect()
 
     # blit will draw text on screen
-    game_window.blit(game_over_surface, game_over_rect)
+    screen.blit(game_over_surface, game_over_rect)
 
 # The main function
 pygame.init()
@@ -111,7 +109,7 @@ def main():
 # Main Function
     while True:
         
-        global change_to,direction,fruit_position,fruit,fruit_spawn
+        global change_to,direction,fruit_position,fruit,fruit_spawn, score
         
         # handling key events
         for event in pygame.event.get():
