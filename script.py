@@ -173,16 +173,16 @@ def main():
         # Game Over conditions
         if snake_position[0] < 0 or snake_position[0] > window_x-10:
             game_over(screen)
-            main()
+            
         if snake_position[1] < 0 or snake_position[1] > window_y-10:
             game_over(screen)
-            main()
+           
     
         # Touching the snake body
         for block in snake_body[1:]:
             if snake_position[0] == block[0] and snake_position[1] == block[1]:
                 game_over(screen)
-                main()
+                
         # displaying score countinuously
         show_score(1, white, 'times new roman', 20, screen)
     
