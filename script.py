@@ -1,4 +1,5 @@
 # Main import block
+from logging import raiseExceptions
 import pygame
 from time import sleep
 import random
@@ -37,11 +38,6 @@ pygame.init()
 
 # Initialize game window
 pygame.display.set_caption("AI Snake")
-# while running:
-#     for event in pygame.event.get():
-#         if event.type == pygame.QUIT:
-#             running = False
-#             pygame.quit()
 #         #FPS Controller and counter
 #         
 fps = pygame.time.Clock()
@@ -87,7 +83,7 @@ def show_score(choice, color, font, size, game_window):
 # Game over function
 
 def game_over(game_window):
-
+    global screen
     
     # Create the font
     my_font = pygame.font.SysFont('times new roman', 50)
@@ -103,8 +99,10 @@ def game_over(game_window):
 
 # The main function
 pygame.init()
-screen = pygame.display.set_mode((window_x, window_y))
+
 def main():
+    global screen
+    screen = pygame.display.set_mode((window_x, window_y))
     screen.fill(black)
 # Main Function
     while True:
@@ -113,6 +111,12 @@ def main():
         
         # handling key events
         for event in pygame.event.get():
+
+            if event.type == pygame.QUIT:
+                running = False
+                pygame.quit()
+                raise Exception("Game quit by user")
+                exit(-1)
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP:
                     change_to = 'UP'
@@ -169,17 +173,25 @@ def main():
             fruit_position[0], fruit_position[1], 10, 10))
     
         # Game Over conditions
-        if snake_position[0] < 0 or snake_position[0] > window_x-10:
+        while snake_position[0] < 0 or snake_position[0] > window_x-10:
             game_over(screen)
+            break
             
         if snake_position[1] < 0 or snake_position[1] > window_y-10:
             game_over(screen)
+            pygame.time.wait(3)
+            screen.fill(black)
+            score = 0
+            snake_body.insert(0, list(snake_position))
            
     
         # Touching the snake body
         for block in snake_body[1:]:
             if snake_position[0] == block[0] and snake_position[1] == block[1]:
                 game_over(screen)
+                pygame.time.wait(3)
+                screen.fill(black)
+                score = 0
                 
         # displaying score countinuously
         show_score(1, white, 'times new roman', 20, screen)
