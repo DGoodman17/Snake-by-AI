@@ -1,8 +1,18 @@
+# Main import block
 import pygame
 from time import sleep
 import random
+from sys import exit
 
 
+pygame.init()
+
+# Vars
+running = True
+
+
+# Keyboard input variable
+pressed = pygame.key.get_pressed()
 
 snake_speed = 15
 
@@ -23,9 +33,12 @@ pygame.init()
 
 # Initialize game window
 pygame.display.set_caption("AI Snake")
-while True:
+while running:
     game_window = pygame.display.set_mode((window_x, window_y))
-
-    #FPS Controller and counter
-    fps = pygame.time.Clock()
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+            pygame.quit()
+        #FPS Controller and counter
+        fps = pygame.time.Clock()
 
