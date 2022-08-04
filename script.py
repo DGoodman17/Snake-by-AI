@@ -17,4 +17,15 @@ red = pygame.Color(255, 0, 0)
 green = pygame.Color(0, 255, 0)
 blue = pygame.Color(0, 0, 255)
 
+# Initialize pygame
+
 pygame.init()
+
+# Initialize game window
+pygame.display.set_caption("AI Snake")
+while True:
+    game_window = pygame.display.set_mode((window_x, window_y))
+
+    #FPS Controller and counter
+    fps = pygame.time.Clock()
+
