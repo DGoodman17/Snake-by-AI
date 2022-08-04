@@ -84,7 +84,7 @@ def show_score(choice, color, font, size, game_window):
 
 def game_over(game_window):
     global screen
-    
+    print('test')
     # Create the font
     my_font = pygame.font.SysFont('times new roman', 50)
 
@@ -106,8 +106,7 @@ def main():
     screen.fill(black)
 # Main Function
     while True:
-        
-        global change_to,direction,fruit_position,fruit,fruit_spawn, score
+        global change_to,direction,fruit_position,fruit,fruit_spawn, score, snake_position
         
         # handling key events
         for event in pygame.event.get():
@@ -175,23 +174,34 @@ def main():
         # Game Over conditions
         while snake_position[0] < 0 or snake_position[0] > window_x-10:
             game_over(screen)
+            pygame.time.delay(10000)
+            # screen.fill(black)
+            score = 0
+            snake_position = [100, 50]
+            change_to  = 'RIGHT'
             break
             
-        if snake_position[1] < 0 or snake_position[1] > window_y-10:
+            
+        while snake_position[1] < 0 or snake_position[1] > window_y-10:
             game_over(screen)
-            pygame.time.wait(3)
-            screen.fill(black)
+            pygame.time.delay(10000)
+            # screen.fill(black)
             score = 0
-            snake_body.insert(0, list(snake_position))
+            snake_position = [100, 50]
+            change_to  = 'RIGHT'
+            break
            
     
         # Touching the snake body
         for block in snake_body[1:]:
             if snake_position[0] == block[0] and snake_position[1] == block[1]:
                 game_over(screen)
-                pygame.time.wait(3)
-                screen.fill(black)
+                pygame.time.delay(10000)
+                # screen.fill(black)
                 score = 0
+                snake_position = [100, 50]
+                change_to  = 'RIGHT'
+                break
                 
         # displaying score countinuously
         show_score(1, white, 'times new roman', 20, screen)
