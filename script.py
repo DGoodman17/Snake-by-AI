@@ -26,6 +26,11 @@ red = pygame.Color(255, 0, 0)
 green = pygame.Color(0, 255, 0)
 blue = pygame.Color(0, 0, 255)
 
+# Secondary Vars
+global fruit_position
+fruit_position = [random.randrange(1, (window_x//10)) * 10,
+                  random.randrange(1, (window_y//10)) * 10]
+
 # Initialize pygame
 
 pygame.init()
@@ -67,46 +72,46 @@ change_to  = direction
 score = 0
 
 # Display the score
-def show_score(choice, color, font, size):
+def show_score(choice, color, font, size, game_window):
 
     # Creat the font
-    score_font = pygame.SysFont(font, size)
+    score_font = pygame.font.SysFont(font, size)
 
     # Display for the surface object
     score_surface = score_font.render('Score: ' + str(score), True, color)
 
     # Create a rectanglear object for the score
-    score_rect = score.surface.get_rect()
+    score_rect = score_surface.get_rect()
 
     # Displaying text
     game_window.blit(score_surface, score_rect)
 
 # Game over function
 
-def game_over():
+def game_over(game_window):
+
     
     # Create the font
     my_font = pygame.font.SysFont('times new roman', 50)
 
     # Creating the text
-    game_over_surface = my_font.render('Your Score is : ' + str(score), True)
+    game_over_surface = my_font.render('Your Score is : ' + str(score), True, red)
 
     # Creating the render object
     game_over_rect = game_over_surface.get_rect()
 
     # blit will draw text on screen
     game_window.blit(game_over_surface, game_over_rect)
-    pygame.display.flip()
 
 # The main function
 pygame.init()
 screen = pygame.display.set_mode((window_x, window_y))
 def main():
+    screen.fill(black)
 # Main Function
-    global change_to
     while True:
-        screen.fill(black)
         
+        global change_to,direction,fruit_position,fruit,fruit_spawn
         
         # handling key events
         for event in pygame.event.get():
@@ -157,29 +162,29 @@ def main():
                             random.randrange(1, (window_y//10)) * 10]
             
         fruit_spawn = True
-        game_window.fill(black)
+        screen.fill(black)
         
         for pos in snake_body:
-            pygame.draw.rect(game_window, green,
+            pygame.draw.rect(screen, green,
                             pygame.Rect(pos[0], pos[1], 10, 10))
-        pygame.draw.rect(game_window, white, pygame.Rect(
+        pygame.draw.rect(screen, white, pygame.Rect(
             fruit_position[0], fruit_position[1], 10, 10))
     
         # Game Over conditions
         if snake_position[0] < 0 or snake_position[0] > window_x-10:
-            game_over()
+            game_over(screen)
             main()
         if snake_position[1] < 0 or snake_position[1] > window_y-10:
-            game_over()
+            game_over(screen)
             main()
     
         # Touching the snake body
         for block in snake_body[1:]:
             if snake_position[0] == block[0] and snake_position[1] == block[1]:
-                game_over()
+                game_over(screen)
                 main()
         # displaying score countinuously
-        show_score(1, white, 'times new roman', 20)
+        show_score(1, white, 'times new roman', 20, screen)
     
         # Refresh game screen
         pygame.display.update()
