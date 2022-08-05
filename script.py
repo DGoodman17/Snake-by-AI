@@ -165,14 +165,7 @@ def main():
             fruit_position = [random.randrange(1, (window_x//10)) * 10,
                             random.randrange(1, (window_y//10)) * 10]
             
-        fruit_spawn = True
-        screen.fill(black)
-        
-        for pos in snake_body:
-            pygame.draw.rect(screen, green,
-                            pygame.Rect(pos[0], pos[1], 10, 10))
-        pygame.draw.rect(screen, white, pygame.Rect(
-            fruit_position[0], fruit_position[1], 10, 10))
+            fruit_spawn = True
     
         # Game Over conditions
         while snake_position[0] < 0 or snake_position[0] > window_x-10:
@@ -209,17 +202,19 @@ def main():
                 change_to  = 'RIGHT'
                 break
         for block in snake_body[1:]:
-            if fruit_position[0] == snake_position[0] or fruit_position[0] == snake_position[1] or fruit_position[1] == snake_position[2] or fruit_position[1] == snake_position[3]:
+            if fruit_position in snake_body:
                 fruit_spawn = False
-                pygame.time.delay(5000)
-                fruit_spawn = True
-            elif fruit_position[1] == snake_position[0] or fruit_position[1] == snake_position[1] or fruit_position[1] == snake_position[2] or fruit_position[1] == snake_position[3]:
-                fruit_spawn = False
-                pygame.time.delay(5000)
-                fruit_spawn = True
                 
         # displaying score countinuously
         show_score(1, white, 'times new roman', 20, screen)
+
+        screen.fill(black)
+        
+        for pos in snake_body:
+            pygame.draw.rect(screen, green,
+                            pygame.Rect(pos[0], pos[1], 10, 10))
+        pygame.draw.rect(screen, red, pygame.Rect(
+            fruit_position[0], fruit_position[1], 10, 10))
     
         # Refresh game screen
         pygame.display.update()
