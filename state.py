@@ -4,13 +4,43 @@ import random
 
 
 class GameState:
+    def reset(self):
+        self.dead = False
+        self.should_tick = True
+
+        # game config
+        self.snake_speed = 15
+
+        # define snake location
+        self.snake_position = [100, 50]
+        self.snake_body = [
+            [100, 50],
+            [90, 50],
+            [80, 50],
+            [70, 50]
+        ]
+
+        # Apple positions
+        self.apple_position = [random.randrange(1, (self.window_x//10)) * 10,
+                               random.randrange(1, (self.window_y//10)) * 10]
+        self.fruit_spawn = True
+
+        # Setting the default direction
+        self.direction = 'RIGHT'
+        self.change_to  = self.direction
+
+        # Initial score
+        self.score = 0
+
     def __init__(self):
-        self.running = True
+        self.dead = False
+        self.should_tick = True
 
         # pressed keys
         self.pressed = pygame.key.get_pressed()
 
-        # window dims
+        # window
+        self.screen = None
         self.window_x = 720
         self.window_y = 480
 
