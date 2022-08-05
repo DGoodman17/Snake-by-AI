@@ -10,8 +10,6 @@ pygame.init()
 # Vars
 running = True
 
-# this is branch refacotr
-
 # Keyboard input variable
 pressed = pygame.key.get_pressed()
 
