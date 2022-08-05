@@ -83,19 +83,21 @@ def show_score(choice, color, font, size, game_window):
 # Game over function
 
 def game_over(game_window):
-    global screen
-    print('test')
-    # Create the font
-    my_font = pygame.font.SysFont('times new roman', 50)
+    # global screen
+    # # Create the font
+    # my_font = pygame.font.SysFont('times new roman', 50)
 
-    # Creating the text
-    game_over_surface = my_font.render('Your Score is : ' + str(score), True, red)
+    # # Creating the text
+    # game_over_surface = my_font.render('Your Score is : ' + str(score), True, red)
 
-    # Creating the render object
-    game_over_rect = game_over_surface.get_rect()
+    # # Creating the render object
+    # game_over_rect = game_over_surface.get_rect()
 
-    # blit will draw text on screen
-    screen.blit(game_over_surface, game_over_rect)
+    # # blit will draw text on screen
+    # screen.blit(game_over_surface, game_over_rect)
+    over_text = pygame.font.SysFont('times new roman', 100)
+    text = over_text.render("Game Over, your score is : " + str(score), True, red)
+    screen.blit(over_text, text)
 
 # The main function
 pygame.init()
@@ -174,7 +176,7 @@ def main():
         # Game Over conditions
         while snake_position[0] < 0 or snake_position[0] > window_x-10:
             game_over(screen)
-            pygame.time.delay(10000)
+            pygame.time.delay(5000)
             # screen.fill(black)
             score = 0
             snake_position = [100, 50]
@@ -184,7 +186,7 @@ def main():
             
         while snake_position[1] < 0 or snake_position[1] > window_y-10:
             game_over(screen)
-            pygame.time.delay(10000)
+            pygame.time.delay(5000)
             # screen.fill(black)
             score = 0
             snake_position = [100, 50]
