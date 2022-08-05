@@ -209,6 +209,15 @@ def main():
                 snake_position = [100, 50]
                 change_to  = 'RIGHT'
                 break
+        for block in snake_body[1:]:
+            if fruit_position[0] == snake_position[0] or fruit_position[0] == snake_position[1] or fruit_position[1] == snake_position[2] or fruit_position[1] == snake_position[3]:
+                fruit_spawn = False
+                pygame.time.delay(5000)
+                fruit_spawn = True
+            elif fruit_position[1] == snake_position[0] or fruit_position[1] == snake_position[1] or fruit_position[1] == snake_position[2] or fruit_position[1] == snake_position[3]:
+                fruit_spawn = False
+                pygame.time.delay(5000)
+                fruit_spawn = True
                 
         # displaying score countinuously
         show_score(1, white, 'times new roman', 20, screen)
