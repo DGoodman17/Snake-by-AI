@@ -1,0 +1,2 @@
+class AiReward():
+  pass
