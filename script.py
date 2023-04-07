@@ -4,10 +4,17 @@ import pygame
 from time import sleep
 import random
 from state import GameState
+from reward import AiReward
 
 pygame.init()
 
+# Main variable block
+reward = 0
+reward_value = reward / 10
+
+
 state = GameState()
+
 
 # Initialize game window
 pygame.display.set_caption("AI Snake")
