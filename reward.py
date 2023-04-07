@@ -14,6 +14,7 @@ score = state.score
 initial_reward = 0
 highest_reward = 0
 current_reward = 0
+death_negative_reward = -10
 
 #Main code block
 class AiReward():
@@ -40,3 +41,10 @@ def check_reward_score(initial_reward, highest_reward):
     elif initial_reward < highest_reward:
         raise Exception("No new high on reward")
         console.log("No new highscore on reward.")
+        console.log(current_reward)
+
+def check_death(initial_reward, death_negative_reward):
+   # Making sure that if the snake dies from itself its more of a negative reward
+   if state.snake_position[0] == state.apple_position[0] and state.snake_position[1] != state.apple_position[1]:
+      current_reward -= death_negative_reward
+      print(current_reward)
