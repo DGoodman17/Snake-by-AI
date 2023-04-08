@@ -48,3 +48,8 @@ def check_death(initial_reward, death_negative_reward):
    if state.snake_position[0] == state.apple_position[0] and state.snake_position[1] != state.apple_position[1]:
       current_reward -= death_negative_reward
       print(current_reward)
+    # Printing the current reward after a negative reward has been made due to death    
+if state.snake_position[0] == state.snake_position[1]:
+   print("Snake is in itself, it has died.")
+   current_reward -= death_negative_reward
+   print(current_reward)
