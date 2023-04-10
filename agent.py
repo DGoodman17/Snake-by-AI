@@ -2,6 +2,9 @@
 #All Sorce code and article: https://github.com/vedantgoswami/SnakeGameAI/blob/main/model.py
 # https://www.geeksforgeeks.org/ai-driven-snake-game-using-deep-q-learning/
 import torch
+import state
+import script
+import reward
 import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
@@ -22,3 +25,7 @@ class Linear_QNet(nn.Module):
         model_folder_path = 'Path'
         file_name = os.path.join(model_folder_path, file_name)
         torch.save(self.state_dict(), file_name)
+
+def get_state(self, game):
+    head = game.snake[0]
+    

@@ -1,156 +1,147 @@
-# Main import block
-from logging import raiseExceptions
 import pygame
-from time import sleep
 import random
-from state import GameState
-from reward import AiReward
-
+from enum import Enum
+from collections import namedtuple
+import numpy as np
+import math
 pygame.init()
+font = pygame.font.Font('arial.ttf',25)
 
-# Main variable block
-reward = 0
-reward_value = reward / 10
-
-
-state = GameState()
-
-
-# Initialize game window
-pygame.display.set_caption("AI Snake")
-
-# Display the score
+# Reset 
+# Reward
+# Play(action) -> Direction
+# Game_Iteration
+# is_collision
 
 
-def show_score(state, color, font, size):
-    # Creat the font
-    score_font = pygame.font.SysFont(font, size)
+class Direction(Enum):
+    RIGHT = 1
+    LEFT = 2
+    UP = 3
+    DOWN = 4
+ 
+Point = namedtuple('Point','x , y')
 
-    # Display for the surface object
-    score_surface = score_font.render(
-        'Score: ' + str(state.score), True, color)
+BLOCK_SIZE=20
+SPEED = 40
+WHITE = (255,255,255)
+RED = (200,0,0)
+BLUE1 = (0,0,255)
+BLUE2 = (0,100,255)
+BLACK = (0,0,0)
 
-    # Create a rectanglear object for the score
-    score_rect = score_surface.get_rect()
+class SnakeGameAI:
+    def __init__(self,w=640,h=480):
+        self.w=w
+        self.h=h
+        #init display
+        self.display = pygame.display.set_mode((self.w,self.h))
+        pygame.display.set_caption('Snake')
+        self.clock = pygame.time.Clock()
+        
+        #init game state
+        self.reset()
+    def reset(self):
+        self.direction = Direction.RIGHT
+        self.head = Point(self.w/2,self.h/2)
+        self.snake = [self.head,
+                      Point(self.head.x-BLOCK_SIZE,self.head.y),
+                      Point(self.head.x-(2*BLOCK_SIZE),self.head.y)]
+        self.score = 0
+        self.food = None
+        self._place__food()
+        self.frame_iteration = 0
+      
 
-    # Displaying text
-    state.screen.blit(score_surface, score_rect)
+    def _place__food(self):
+        x = random.randint(0,(self.w-BLOCK_SIZE)//BLOCK_SIZE)*BLOCK_SIZE
+        y = random.randint(0,(self.h-BLOCK_SIZE)//BLOCK_SIZE)*BLOCK_SIZE
+        self.food = Point(x,y)
+        if(self.food in self.snake):
+            self._place__food()
 
-# Game over function
 
-
-def game_over(state):
-    state.dead = True
-    state.should_tick = False
-
-def refresh_display(state: GameState):
-    state.screen.fill(state.black)
-
-    # displaying score countinuously
-    show_score(state, state.white, 'times new roman', 20)
-
-    for pos in state.snake_body:
-        pygame.draw.rect(state.screen, state.green,
-                            pygame.Rect(pos[0], pos[1], 10, 10))
-    pygame.draw.rect(state.screen, state.red, pygame.Rect(
-        state.apple_position[0], state.apple_position[1], 10, 10))
-    
-    if state.dead:
-        # Create the font
-        my_font = pygame.font.SysFont('times new roman', 50)
-
-        # Creating the text
-        game_over_surface = my_font.render(
-            'Game Over -Your Score is : ' + str(state.score), True, state.red)
-
-        # Creating the render object
-        game_over_rect = game_over_surface.get_rect()
-
-        # blit will draw text on screen
-        state.screen.blit(game_over_surface, game_over_rect)
-
-    # Refresh game screen
-    pygame.display.update()
-
-def main(state: GameState):
-    state.screen = pygame.display.set_mode((state.window_x, state.window_y))
-    state.screen.fill(state.black)
-
-    # Main Function
-    while True:
-        # handling key events
+    def play_step(self,action):
+        self.frame_iteration+=1
+        # 1. Collect the user input
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
+            if(event.type == pygame.QUIT):
                 pygame.quit()
-                raise Exception("Game quit by user")
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_UP:
-                    state.change_to = 'UP'
-                if event.key == pygame.K_DOWN:
-                    state.change_to = 'DOWN'
-                if event.key == pygame.K_LEFT:
-                    state.change_to = 'LEFT'
-                if event.key == pygame.K_RIGHT:
-                    state.change_to = 'RIGHT'
-                if event.key == pygame.K_ESCAPE:
-                    if state.dead:
-                        state.reset()
+                quit()
+            
+        # 2. Move
+        self._move(action)
+        self.snake.insert(0,self.head)
 
-        # If two keys pressed simultaneously
-        # we don't want snake to move into two
-        # directions simultaneously
-        if state.change_to == 'UP' and state.direction != 'DOWN':
-            state.direction = 'UP'
-        if state.change_to == 'DOWN' and state.direction != 'UP':
-            state.direction = 'DOWN'
-        if state.change_to == 'LEFT' and state.direction != 'RIGHT':
-            state.direction = 'LEFT'
-        if state.change_to == 'RIGHT' and state.direction != 'LEFT':
-            state.direction = 'RIGHT'
+        # 3. Check if game Over
+        reward = 0  # eat food: +10 , game over: -10 , else: 0
+        game_over = False 
+        if(self.is_collision() or self.frame_iteration > 100*len(self.snake) ):
+            game_over=True
+            reward = -10
+            return reward,game_over,self.score
+        # 4. Place new Food or just move
+        if(self.head == self.food):
+            self.score+=1
+            reward=10
+            self._place__food()
+            
+        else:
+            self.snake.pop()
         
+        # 5. Update UI and clock
+        self._update_ui()
+        self.clock.tick(SPEED)
+        # 6. Return game Over and Display Score
         
-        # everything in here should be tick-only
-        if state.should_tick:
-            # Moving the snake
-            if state.direction == 'UP':
-                state.snake_position[1] -= 10
-            if state.direction == 'DOWN':
-                state.snake_position[1] += 10
-            if state.direction == 'LEFT':
-                state.snake_position[0] -= 10
-            if state.direction == 'RIGHT':
-                state.snake_position[0] += 10
+        return reward,game_over,self.score
 
-            # Snake body growing mechanism
-            # if fruits and snakes collide then scores
-            # will be incremented by 10
-            state.snake_body.insert(0, list(state.snake_position))
-            if state.snake_position[0] == state.apple_position[0] and state.snake_position[1] == state.apple_position[1]:
-                state.score += 10
-                state.fruit_spawn = False
-            else:
-                state.snake_body.pop()
+    def _update_ui(self):
+        self.display.fill(BLACK)
+        for pt in self.snake:
+            pygame.draw.rect(self.display,BLUE1,pygame.Rect(pt.x,pt.y,BLOCK_SIZE,BLOCK_SIZE))
+            pygame.draw.rect(self.display,BLUE2,pygame.Rect(pt.x+4,pt.y+4,12,12))
+        pygame.draw.rect(self.display,RED,pygame.Rect(self.food.x,self.food.y,BLOCK_SIZE,BLOCK_SIZE))
+        text = font.render("Score: "+str(self.score),True,WHITE)
+        self.display.blit(text,[0,0])
+        pygame.display.flip()
 
-            if not state.fruit_spawn:
-                state.apple_position = [random.randrange(1, (state.window_x//10)) * 10,
-                                        random.randrange(1, (state.window_y//10)) * 10]
+    def _move(self,action):
+        # Action
+        # [1,0,0] -> Straight
+        # [0,1,0] -> Right Turn 
+        # [0,0,1] -> Left Turn
 
-                state.fruit_spawn = True
+        clock_wise = [Direction.RIGHT,Direction.DOWN,Direction.LEFT,Direction.UP]
+        idx = clock_wise.index(self.direction)
+        if np.array_equal(action,[1,0,0]):
+            new_dir = clock_wise[idx]
+        elif np.array_equal(action,[0,1,0]):
+            next_idx = (idx + 1) % 4
+            new_dir = clock_wise[next_idx] # right Turn
+        else:
+            next_idx = (idx - 1) % 4
+            new_dir = clock_wise[next_idx] # Left Turn
+        self.direction = new_dir
 
-        # Game Over conditions
-        if state.snake_position[0] < 0 or state.snake_position[0] > state.window_x-10 \
-                or state.snake_position[1] < 0 or state.snake_position[1] > state.window_y-10:
-            game_over(state)
+        x = self.head.x
+        y = self.head.y
+        if(self.direction == Direction.RIGHT):
+            x+=BLOCK_SIZE
+        elif(self.direction == Direction.LEFT):
+            x-=BLOCK_SIZE
+        elif(self.direction == Direction.DOWN):
+            y+=BLOCK_SIZE
+        elif(self.direction == Direction.UP):
+            y-=BLOCK_SIZE
+        self.head = Point(x,y)
 
-        # Touching the snake body
-        for block in state.snake_body[1:]:
-            if state.snake_position[0] == block[0] and state.snake_position[1] == block[1]:
-                game_over(state)
-
-        refresh_display(state)
-
-        # Frame Per Second /Refresh Rate
-        state.fps.tick(state.snake_speed)
-
-
-main(state)
+    def is_collision(self,pt=None):
+        if(pt is None):
+            pt = self.head
+        #hit boundary
+        if(pt.x>self.w-BLOCK_SIZE or pt.x<0 or pt.y>self.h - BLOCK_SIZE or pt.y<0):
+            return True
+        if(pt in self.snake[1:]):
+            return True
+        return False
