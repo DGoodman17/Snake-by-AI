@@ -94,3 +94,4 @@ def get_state(self, game):
             mini_sample = self.memory
         states, actions, rewards, next_states, dones = zip(*mini_sample)
         self.trainer.train_step(states, actions, rewards, next_states, dones)
+        self.model.load_state_dict(torch.load('PATH'))
