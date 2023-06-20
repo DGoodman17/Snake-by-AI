@@ -70,3 +70,27 @@ def get_state(self, game):
     ]
     return np.array(state, dtype=int)
     
+    def get_action(self, state):
+        # random moves, tradeoff exploitation
+        self.epsilon = 80 - self.n_game
+        final_move = [0, 0, 0]
+        if(random.randint(0, 200) < self.epsilon):
+            move = random.randint(0, 2)
+            final_move[move]
+        else:
+            state0 = torch.tensor(state, dtype=torch.float).cuda()
+            prediction =    self.model(state0).cuda()
+            move = torch.argmax(prediction).item()
+            final_move[move] = 1
+        return final_move
+    
+    def train_short_memory(self, state, action, reward, next_state, done):
+        self.trainer.train_step(state, action, reward, next_state, done)
+    
+    def train_long_memory(self):
+        if(len(self.memory) > BATCH_SIZE):
+            mini_sample = random.sample(self.memory, BATCH_SIZE)
+        else:
+            mini_sample = self.memory
+        states, actions, rewards, next_states, dones = zip(*mini_sample)
+        self.trainer.train_step(states, actions, rewards, next_states, dones)
