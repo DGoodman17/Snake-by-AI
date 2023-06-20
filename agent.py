@@ -1,6 +1,4 @@
 #Main import block
-#All Sorce code and article: https://github.com/vedantgoswami/SnakeGameAI/blob/main/model.py
-# https://www.geeksforgeeks.org/ai-driven-snake-game-using-deep-q-learning/
 import torch
 import torch.nn as nn
 import torch.optim as optim
