@@ -5,7 +5,7 @@ from collections import namedtuple
 import numpy as np
 import math
 pygame.init()
-font = pygame.font.Font('Fonts/arial.ttf', 25)
+font = pygame.font.Font('Fonts/arial.ttf',25)
 
 # Reset 
 # Reward
@@ -145,3 +145,4 @@ class SnakeGameAI:
         if(pt in self.snake[1:]):
             return True
         return False
+    
